@@ -11,7 +11,7 @@ class CircleIterator:
     upper = 0
 
     #Constructor
-    def __CircleIterator__(self, startIndex = 0, lower = 0, upper = 99):
+    def __init__(self, startIndex = 0, lower = 0, upper = 99):
         self._index = startIndex
         if lower > upper:
             raise Exception("Lower bound on Circular Iterator cannot be greater than Upper!")
