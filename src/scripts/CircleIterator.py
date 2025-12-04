@@ -37,6 +37,9 @@ class CircleIterator:
         for step in range(numberOfSteps):
             if self._index == 99:
                 self._index = 0
+                #For day 1 part 2, we also count each time it passes 0:
+                if step != (numberOfSteps - 1):
+                    self._counter += 1
             else:
                 self._index += 1
         self.finalizeSteps()
@@ -44,7 +47,10 @@ class CircleIterator:
     def iterateBackwards(self, numberOfSteps):
         for step in range(numberOfSteps):
             if self._index == 0:
-                self_index = 99
+                #For day 1 part 2, we also count each time it passes 0:
+                if step != 0:
+                    self._counter += 1
+                self._index = 99
             else:
                 self._index -= 1
         self.finalizeSteps()
