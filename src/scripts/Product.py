@@ -12,11 +12,15 @@ class Product:
 
     def __init__(self, number : str):
         length = len(number)
-        self._leftPart = number[:length]
-        self._rightPart = number[length:]
+        #no need to check uneven lengths, as they are always valid product numbers
+        if length % 2 == 0:
+            half = int(length / 2)
+            self._leftPart = number[:half]
+            self._rightPart = number[half:]
+            self.checkProductNumber()
+        
         self._number = int(number)
-        self.checkProductNumber()
-
+        
     def isInvalid(self) -> bool:
         return self._invalid
     
@@ -27,5 +31,6 @@ class Product:
         return self._number
 
     def checkProductNumber(self):
+        #print("left part: " + self._leftPart + ", right part: " + self._rightPart)
         if self._leftPart == self._rightPart:
             self.setInvalid(True)
