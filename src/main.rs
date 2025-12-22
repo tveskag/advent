@@ -1,34 +1,33 @@
 use clap::Parser;
+//mod util;
+// mod day1;
+// mod day2;
+// mod day3;
+//mod day4;
+// mod day5;
+// mod day6;
+//mod day7;
+// mod day8;
+// mod day9;
+// mod day10;
+mod day11;
+//mod day12;
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
-struct Cli {
+struct Arguments {
     /// The path to the file to read
     path: std::path::PathBuf,
 }
 
 fn main() {
-    let args = Cli::parse();
+    let args = Arguments::parse();
     //println!("path: {:?}", args.path)
 
-    let content = std::fs::read_to_string(&args.path).expect("could not read file");
+    let content =
+        std::fs::read_to_string(&args.path).expect("could not read file");
 
-    let mut dial: i32 = 50;
-    let mut counter: i32 = 0;
-
-    for line in content.lines() {
-        dial += match line.split_at(1) {
-            ("R", amount) => amount.parse::<i32>().unwrap(),
-            ("L", amount) => -amount.parse::<i32>().unwrap(),
-            _ => 0,
-        };
-        let digits = dial.to_string().chars().rev().take(2).collect::<String>();
-
-        println!("line: {:?}, dial: {:?}, digits: {:?}", line, dial, digits);
-
-        if dial == 0 || digits == "00" {
-            counter += 1;
-        }
-    }
-    println!("zeros: {:?}", counter)
+    let answer = day11::run(&content);
+    println!("Answer: {:?}", answer)
+    //day2::part2(content.clone());
 }
