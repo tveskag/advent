@@ -1,4 +1,4 @@
-use std::iter::Zip;
+// use std::iter::Zip;
 
 use crate::util::parse;
 
@@ -10,32 +10,32 @@ use crate::util::parse;
 //     };
 // }
 
-macro_rules! zip {
-    ($x: expr) => ($x);
-    ($x: expr, $($y: expr), +) => (
-        $x.iter().zip(
-            zip!($($y), +))
-    )
-}
+// macro_rules! zip {
+//     ($x: expr) => ($x);
+//     ($x: expr, $($y: expr), +) => (
+//         $x.iter().zip(
+//             zip!($($y), +))
+//     )
+// }
 
-fn zipper(mut main: &impl Iterator, tozip: &impl Iterator) -> Zip<T, R> {
-    main.zip(tozip)
-}
+// fn zipper(mut main: &impl Iterator, tozip: &impl Iterator) -> Zip<T, R> {
+//     main.zip(tozip)
+// }
 
-pub fn run2(input: &str) -> usize {
-    let rows = input.split("\n");
-    let init = rows.last();
+// pub fn run2(input: &str) -> usize {
+//     let rows = input.split("\n");
+//     let init = rows.last();
 
-    rows.fold(init, |acc, row| acc.zip(row.chars));
-    
-    let (numbers1, numbers2, numbers3, numbers4, operators) = split!(rows, 4);
+//     rows.fold(init, |acc, row| acc.zip(row.chars));
 
-    let zipped = zip!(numbers1.chars(), numbers2, numbers3, numbers4);
-    zipped.map(|val| match val {
-        (((num1, num2),num3),num4) => 
-    })
+//     let (numbers1, numbers2, numbers3, numbers4, operators) = split!(rows, 4);
 
-}
+//     let zipped = zip!(numbers1.chars(), numbers2, numbers3, numbers4);
+//     zipped.map(|val| match val {
+//         (((num1, num2),num3),num4) =>
+//     })
+
+// }
 
 pub fn run(input: &str) -> usize {
     let mut numbers = input.split("\n");

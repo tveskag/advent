@@ -1,4 +1,4 @@
-use crate::util::{Point2D, parse};
+use crate::util::parse;
 
 pub fn run(input: &str) -> usize {
     let tiles = input
@@ -8,8 +8,7 @@ pub fn run(input: &str) -> usize {
             let (x, y) = line
                 .split_once(",")
                 .unwrap();
-            Point2D(parse::<isize>(x), parse::<isize>(y)),
-
+            (parse::<isize>(x), parse::<isize>(y))
         });
 
     let squares = tiles
@@ -20,8 +19,8 @@ pub fn run(input: &str) -> usize {
                 .clone()
                 .skip(index1 + 1)
                 .map(move |tile2| {
-                    let (x1, y1) = tile1.coords;
-                    let (x2, y2) = tile2.coords;
+                    let (x1, y1) = tile1;
+                    let (x2, y2) = tile2;
                     ((x2 - x1).abs() + 1) * ((y2 - y1).abs() + 1)
                 })
         })

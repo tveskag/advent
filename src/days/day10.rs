@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::util::parse;
-use itertools::{Combinations, Itertools};
+use itertools::Itertools;
 
 fn trim(string: &str) -> &str {
     string.trim_matches(&['{', '}', '(', ')', '[', ']'][..])
@@ -113,7 +113,7 @@ pub fn run(input: &str) -> usize {
         //     .iter()
         //     .for_each(|b| println!("{:#018b}", b));
 
-        let mut graph = build_graph(size);
+        //let mut graph = build_graph(size);
 
         // for (node, edges) in graph.clone() {
         //     let edges_str = edges
@@ -122,13 +122,13 @@ pub fn run(input: &str) -> usize {
         //     println!("{:#016b} -- {}\n\n", node, edges_str);
         // }
 
-        let start = 2u16.pow(size) - 1;
-        let min_span = dfs(indicator, &buttons, &mut graph, &start);
-        println!("{min_span}");
-        counter += min_span;
+        // let start = 2u16.pow(size) - 1;
+        // let min_span = dfs(indicator, &buttons, &mut graph, &start);
+        // println!("{min_span}");
+        // counter += min_span;
 
-        // let amount = naive(indicator, buttons, size);
-        // counter += amount;
+        let amount = naive(indicator, buttons, size);
+        counter += amount;
     }
     counter as usize
 }

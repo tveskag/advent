@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-pub fn main(content: String) -> usize {
+pub fn run(content: &str) -> usize {
     let mut counter = 0;
     for interval in content.split(",") {
         let (startstr, endstr) = interval
@@ -38,17 +38,17 @@ fn part2(n: usize) -> usize {
 
     let factors = factorize(length);
 
-    for n in factors {
+    for factor in factors {
         //let splits = recursplit(str, n);
 
-        let (first, rest) = str.split_at(n);
+        let (first, rest) = str.split_at(factor);
         let hit = rest
             .chars()
-            .chunks(n)
+            .chunks(factor)
             .into_iter()
             .fold(true, |acc, chars| {
                 let substr =
-                    chars.fold("", |acc, c| acc.to_owned() + &c.to_string());
+                    chars.fold("".to_owned(), |acc, c| acc + &c.to_string());
                 if substr == first {
                     acc & true
                 } else {
@@ -57,6 +57,7 @@ fn part2(n: usize) -> usize {
             });
 
         if hit {
+            println!("{n}");
             return n;
         }
     }
@@ -75,7 +76,7 @@ fn recursplit(string: String, mid: usize) -> Vec<String> {
 
 fn factorize(n: usize) -> Vec<usize> {
     let mut out = Vec::new();
-    for f in 0..n / 2 {
+    for f in 1..n {
         if n % f == 0 {
             out.push(f);
         }
