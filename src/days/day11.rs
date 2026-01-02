@@ -22,17 +22,23 @@ pub fn run(input: &str) -> usize {
             acc
         });
 
-    bfs(&graph, "you", &HashSet::new(), 0)
+    dfs(&graph, "svr", &HashSet::new(), 0)
 }
 
-fn bfs(
+fn dfs(
     graph: &HashMap<&str, Vec<&str>>,
     vertex: &str,
     visited: &HashSet<&str>,
     sum: usize,
 ) -> usize {
     if vertex == "out" {
-        return 1;
+        let dac = visited.contains("dac");
+        let fft = visited.contains("fft");
+        if dac && fft {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     let nodes = graph
@@ -48,7 +54,7 @@ fn bfs(
                 acc
             } else {
                 new_visited.insert(node);
-                acc + bfs(graph, node, &new_visited, sum)
+                acc + dfs(graph, node, &new_visited, sum)
             }
         })
 }
