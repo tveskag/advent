@@ -34,8 +34,7 @@ pub fn run(content: &str) -> usize {
             .zip(middle.windows(3))
             .zip(bottom.windows(3))
         {
-            let ((top_slice, &[left, mut center, right]), bottom_slice) =
-                square
+            let ((top_slice, &[left, center, right]), bottom_slice) = square
             else {
                 panic!("Too short lines!")
             };
@@ -49,7 +48,7 @@ pub fn run(content: &str) -> usize {
                         .iter()
                         .fold(0, |acc, e| acc + e);
                 if sum < 4 {
-                    center = 0;
+                    counter += 1;
                 }
             }
         }

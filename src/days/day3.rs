@@ -1,35 +1,51 @@
-pub fn main(content: String) -> u32 {
-    let mut counter = 0;
-    for pack in content.lines() {
-        let (index, ten) = pack
-            .chars()
-            .take(pack.len() - 1)
-            .map(|e| match e.to_digit(10) {
-                Some(n) => -i16::from(n as u8),
-                None => panic!("Error: not a digit"),
-            })
-            .enumerate()
-            .min_by(|a, b| a.1.cmp(&b.1))
-            .unwrap();
-        let (one_index, one) = pack
-            .chars()
-            .skip(index + 1)
-            .map(|e| match e.to_digit(10) {
-                Some(n) => -i16::from(n as u8),
-                None => panic!("Error: not a digit"),
-            })
-            .enumerate()
-            .min_by(|a, b| a.1.cmp(&b.1))
-            .unwrap();
-        let joltage = -ten * 10 + -one;
+pub fn run(content: &str) -> usize {
+    let length = 2;
+    content
+        .lines()
+        .fold((0, length), &find_joltage)
+        .0
+}
 
-        println!(
-            "pack: {}, ten index: {}, one index: {}",
-            pack, index, one_index
-        );
-        counter += joltage;
-        //let one = println!("numbers: {:?}", numbers);
-        //counter += numbers[0] * 10 + numbers[1];
-    }
-    return counter as u32;
+fn find_joltage(
+    (counter, length): (usize, usize),
+    pack: &str,
+) -> (usize, usize) {
+    (
+        counter
+            + (0..length)
+                .rev()
+                .fold((0, pack.len(), pack), &count_voltage)
+                .0,
+        length,
+    )
+}
+
+fn count_voltage(
+    (joltage, cut_off, pack): (usize, usize, &str),
+    n: usize,
+) -> (usize, usize, &str) {
+    let (index, value) = extract(pack, cut_off, n);
+    (
+        joltage
+            + 10usize.pow(
+                n.try_into()
+                    .unwrap(),
+            ) * value,
+        index + 1,
+        pack,
+    )
+}
+
+fn extract(pack: &str, take: usize, skip: usize) -> (usize, usize) {
+    pack.chars()
+        .rev()
+        .skip(skip)
+        .take(take)
+        .map(|e| {
+            e.to_digit(10)
+                .unwrap() as usize
+        })
+        .enumerate()
+        .max_by(|(_, a), (_, b)| a.cmp(&b))
+        .unwrap()
 }

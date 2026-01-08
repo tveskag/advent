@@ -1,4 +1,5 @@
 use clap::Parser;
+use std::fs::read_to_string;
 mod days;
 mod util;
 
@@ -11,12 +12,9 @@ struct Arguments {
 
 fn main() {
     let args = Arguments::parse();
-    //println!("path: {:?}", args.path)
 
-    let content =
-        std::fs::read_to_string(&args.path).expect("could not read file");
+    let content = read_to_string(&args.path).expect("could not read file");
 
-    let answer = days::day2::run(&content);
+    let answer = days::day3::run(&content);
     println!("Answer: {:?}", answer)
-    //day2::part2(content.clone());
 }
