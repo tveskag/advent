@@ -1,87 +1,109 @@
 use std::iter::once;
 
 pub fn run(content: &str) -> usize {
-    let (first, _) = content
-        .split_once("\n")
-        .unwrap();
-    let line_length = first.len();
-    let empty_line = vec![0; line_length + 2];
-
-    let lines: Vec<Vec<usize>> = once(empty_line.clone())
-        .chain(
-            content
-                .lines()
-                .map(|line| {
-                    once('.')
-                        .chain(line.chars())
-                        .chain(once('.'))
-                        .map(|c| if c == '@' { 1 } else { 0 })
-                        .collect()
-                }),
-        )
-        .chain(once(empty_line.clone()))
+    let center_lines: Vec<Vec<bool>> = content
+        .lines()
+        .map(|line| {
+            line.chars()
+                .map(|c| c == '@')
+                .collect()
+        })
         .collect();
 
-    let mut counter: usize = 0;
+    let floorplan = add_padding(center_lines);
 
-    for triple in lines.windows(3) {
-        let [top, middle, bottom] = triple else {
-            panic!("Too few lines!")
-        };
+    let initial_count = count_rolls(&floorplan);
+    let mut removed = floorplan;
+    let mut prev = initial_count;
+    let mut cur = prev - 1;
+    while cur < prev {
+        prev = cur;
+        removed = remove_paper(&removed);
+        cur = count_rolls(&removed);
+    }
+    initial_count - cur
+}
 
-        for square in top
-            .windows(3)
-            .zip(middle.windows(3))
-            .zip(bottom.windows(3))
-        {
-            let ((top_slice, &[left, center, right]), bottom_slice) = square
-            else {
-                panic!("Too short lines!")
+fn remove_paper(floorplan: &Vec<Vec<bool>>) -> Vec<Vec<bool>> {
+    // let mut counter: usize = 0;
+    // for triple in floorplan.windows(3) {
+    //     let [top, middle, bottom] = triple else {
+    //         panic!("Too few lines!")
+    //     };
+
+    //     for square in top
+    //         .windows(3)
+    //         .zip(middle.windows(3))
+    //         .zip(bottom.windows(3))
+    //     {
+    //         let ((top_slice, middle_slice), bottom_slice) = square;
+    //         let sum = sum(top_slice) + sum(middle_slice) + sum(bottom_slice);
+    //         if middle_slice[1] && sum < 4 {
+    //             counter += 1;
+    //         }
+    //     }
+    // }
+    // counter
+
+    let new_center = floorplan
+        .windows(3)
+        .fold(Vec::new(), |mut lines, triple| {
+            let [top, middle, bottom] = triple else {
+                panic!("Too few lines!")
             };
-            if center == 1 {
-                let sum = left
-                    + right
-                    + top_slice
-                        .iter()
-                        .fold(0, |acc, e| acc + e)
-                    + bottom_slice
-                        .iter()
-                        .fold(0, |acc, e| acc + e);
-                if sum < 4 {
-                    counter += 1;
-                }
-            }
-        }
-    }
-    counter
+            let squares = top
+                .windows(3)
+                .zip(middle.windows(3))
+                .zip(bottom.windows(3));
+            let new_line = squares.fold(
+                Vec::new(),
+                |mut line, ((top_slice, middle_slice), bottom_slice)| {
+                    let sum =
+                        sum(top_slice) + sum(middle_slice) + sum(bottom_slice);
+                    line.push(middle_slice[1] && sum > 4);
+                    line
+                },
+            );
+            lines.push(new_line);
+            lines
+        });
+
+    add_padding(new_center)
 }
 
-/*
+fn add_padding(floorplan: Vec<Vec<bool>>) -> Vec<Vec<bool>> {
+    let first = floorplan
+        .first()
+        .unwrap();
+    let line_length = first.len();
+    let empty_line = vec![false; line_length + 2];
 
-fn generate_lattice(content: String, side_length: usize) {
+    let side_padded = floorplan
+        .iter()
+        .map(|line| {
+            once(false)
+                .chain(
+                    line.iter()
+                        .map(|b| *b),
+                )
+                .chain(once(false))
+                .collect()
+        });
 
-
-    for (row_index, row) in content.lines().enumerate() {
-        for (space_index, space) in row.char_indices() {
-            //content[]
-        }
-    }
+    once(empty_line.clone())
+        .chain(side_padded)
+        .chain(once(empty_line.clone()))
+        .collect()
 }
 
-
-fn unDirect(mat: [[bool; 10]; 10]) -> [[bool; 10]; 10] { mat.iter().enumerate().map(|(i, row)| { row.iter().enumerate().map(|(j, _)| mat[i][j] || mat[j][i] )})}
-
-fn generateAdjacency(condition: (i: usize, j: usize, length: usize) -> bool) {
-  return |x: number, y: number| {
-    let list: [bool; x*x];
-    return unDirect(list.map(|_, i| list.map(|_, j| condition(i,j,x,y) && if (i != j) { 1 } else {0})));
-  }
+fn count_rolls(floorplan: &Vec<Vec<bool>>) -> usize {
+    floorplan
+        .iter()
+        .fold(0, |acc, line| acc + sum(line))
 }
 
-//export const generateCircle = generateAdjacency((i, j, x, y) => i === j+x)
-
-//export const generateSquare = generateAdjacency((i, j, x, y) =>
-// (i%x && i === j+1)
-// || (i === j+x)
-//)
-*/
+fn sum(slice: &[bool]) -> usize {
+    slice
+        .iter()
+        .fold(0, |acc, e| if *e { acc + 1 } else { acc })
+}

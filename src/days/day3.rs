@@ -1,22 +1,31 @@
 pub fn run(content: &str) -> usize {
-    let mut counter = 0;
-    let length = 12;
+    let length = 2;
+    content
+        .lines()
+        .fold((0, length), &find_joltage)
+        .0
+}
 
-    for pack in content.lines() {
-        let mut cut_off = pack.len();
-        let mut joltage = 0;
-        for n in (0..length).rev() {
-            let (index, value) = extract(pack, cut_off, n);
-            cut_off = index + 1;
-            joltage += 10usize.pow(
-                n.try_into()
-                    .unwrap(),
-            ) * value;
-        }
+fn find_joltage(
+    (counter, length): (usize, usize),
+    pack: &str,
+) -> (usize, usize) {
+    let (joltage, _, _) = (0..length)
+        .rev()
+        .fold((0, pack.len(), pack), &count_voltage);
+    (counter + joltage, length)
+}
 
-        counter += joltage;
-    }
-    return counter;
+fn count_voltage(
+    (joltage, cut_off, pack): (usize, usize, &str),
+    n: usize,
+) -> (usize, usize, &str) {
+    let (index, value) = extract(pack, cut_off, n);
+    let n_sized = n
+        .try_into()
+        .unwrap();
+    let power = 10usize.pow(n_sized) * value;
+    (joltage + power, index + 1, pack)
 }
 
 fn extract(pack: &str, take: usize, skip: usize) -> (usize, usize) {
@@ -29,8 +38,6 @@ fn extract(pack: &str, take: usize, skip: usize) -> (usize, usize) {
                 .unwrap() as usize
         })
         .enumerate()
-        .max_by(|a, b| {
-            a.1.cmp(&b.1)
-        })
+        .max_by(|(_, a), (_, b)| a.cmp(&b))
         .unwrap()
 }
