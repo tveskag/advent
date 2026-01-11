@@ -10,14 +10,10 @@ fn find_joltage(
     (counter, length): (usize, usize),
     pack: &str,
 ) -> (usize, usize) {
-    (
-        counter
-            + (0..length)
-                .rev()
-                .fold((0, pack.len(), pack), &count_voltage)
-                .0,
-        length,
-    )
+    let (joltage, _, _) = (0..length)
+        .rev()
+        .fold((0, pack.len(), pack), &count_voltage);
+    (counter + joltage, length)
 }
 
 fn count_voltage(
@@ -25,15 +21,11 @@ fn count_voltage(
     n: usize,
 ) -> (usize, usize, &str) {
     let (index, value) = extract(pack, cut_off, n);
-    (
-        joltage
-            + 10usize.pow(
-                n.try_into()
-                    .unwrap(),
-            ) * value,
-        index + 1,
-        pack,
-    )
+    let n_sized = n
+        .try_into()
+        .unwrap();
+    let power = 10usize.pow(n_sized) * value;
+    (joltage + power, index + 1, pack)
 }
 
 fn extract(pack: &str, take: usize, skip: usize) -> (usize, usize) {

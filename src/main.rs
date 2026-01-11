@@ -15,6 +15,6 @@ fn main() {
 
     let content = read_to_string(&args.path).expect("could not read file");
 
-    let answer = days::day3::run(&content);
+    let answer = days::day5::run(&content);
     println!("Answer: {:?}", answer)
 }
