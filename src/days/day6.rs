@@ -1,43 +1,92 @@
 // use std::iter::Zip;
 
+use itertools::Itertools;
+
 use crate::util::parse;
 
-// macro_rules! split {
-//     ($x: expr, $y: tt) => {
-//         let $(
-//             $x.next().unwrap().chars()
-//         )*
-//     };
-// }
+macro_rules! split {
+    ($($x: expr),*) => {
+        let () $(
+            $x.next().unwrap().chars()
+        )*
+    };
+}
 
 // macro_rules! zip {
 //     ($x: expr) => ($x);
 //     ($x: expr, $($y: expr), +) => (
 //         $x.iter().zip(
-//             zip!($($y), +))
+//             zip!($($y), +)
+//         ).flatten()
 //     )
 // }
 
-// fn zipper(mut main: &impl Iterator, tozip: &impl Iterator) -> Zip<T, R> {
-//     main.zip(tozip)
+// pub fn run(input: &str) -> usize {
+//     let (numbers1, numbers2, numbers3, numbers4, operators) =
+//         split!(input, '\n');
+
+//     rows.fold(init.chars(), |acc, row| acc.zip(row.chars()));
+
+//     let zipped = zip!(numbers1, numbers2, numbers3, numbers4);
 // }
-
-// pub fn run2(input: &str) -> usize {
-//     let rows = input.split("\n");
-//     let init = rows.last();
-
-//     rows.fold(init, |acc, row| acc.zip(row.chars));
-
-//     let (numbers1, numbers2, numbers3, numbers4, operators) = split!(rows, 4);
-
-//     let zipped = zip!(numbers1.chars(), numbers2, numbers3, numbers4);
-//     zipped.map(|val| match val {
-//         (((num1, num2),num3),num4) =>
-//     })
-
-// }
+//
 
 pub fn run(input: &str) -> usize {
+    let (rest, operators) = input
+        .trim()
+        .rsplit_once('\n')
+        .unwrap();
+    let (numbers1, rest) = rest
+        .split_once('\n')
+        .unwrap();
+    let (numbers2, rest) = rest
+        .split_once('\n')
+        .unwrap();
+    let (numbers3, rest) = rest
+        .split_once('\n')
+        .unwrap();
+    let numbers4 = rest;
+
+    let mut prestate = Vec::new();
+    prestate.push(Vec::new());
+    let to_operate_on = numbers1
+        .chars()
+        .zip(numbers2.chars())
+        .zip(numbers3.chars())
+        .zip(numbers4.chars())
+        .fold(prestate, |mut acc, (((n1, n2), n3), n4)| {
+            let strn = format!("{n1}{n2}{n3}{n4}");
+            let trimmed = strn.trim();
+            if trimmed.is_empty() {
+                acc.push(Vec::new());
+            } else {
+                let mut numbers = acc
+                    .pop()
+                    .unwrap();
+
+                numbers.push(parse::<usize>(trimmed));
+                acc.push(numbers)
+            }
+            acc
+        });
+
+    to_operate_on
+        .iter()
+        .zip(operators.split_whitespace())
+        .fold(0, |acc, (num_vec, operator)| {
+            acc + match operator {
+                "*" => num_vec
+                    .iter()
+                    .fold(1, |prod, number| prod * number),
+                "+" => num_vec
+                    .iter()
+                    .fold(0, |prod, number| prod + number),
+                _ => panic!("Not an operator"),
+            }
+        })
+}
+
+pub fn part1(input: &str) -> usize {
     let mut numbers = input.split("\n");
     //.map(|list| list.split(" ").map(|val| parse::<usize>(val)));
 
