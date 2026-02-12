@@ -2,9 +2,9 @@ use std::collections::{HashMap, HashSet};
 
 pub fn run(input: &str) -> usize {
     let state: HashMap<&str, Vec<&str>> = HashMap::new();
-    let nodes_amount = input
-        .lines()
-        .count();
+    // let nodes_amount = input
+    //     .lines()
+    //     .count();
     let graph = input
         .lines()
         .fold(state, |mut acc, line| {
@@ -22,7 +22,7 @@ pub fn run(input: &str) -> usize {
             acc
         });
 
-    dfs(&graph, "svr", &HashSet::new(), 0)
+    dfs(&graph, "jmb", &HashSet::new(), 0)
 }
 
 fn dfs(
@@ -31,14 +31,19 @@ fn dfs(
     visited: &HashSet<&str>,
     sum: usize,
 ) -> usize {
+    // if vertex == "dac" {
+    //     return 0;
+    // let dac = visited.contains("dac");
+    // let fft = visited.contains("fft");
+    // if dac && fft {
+    //     return 1;
+    // } else {
+    //     return 0;
+    // }
+    // }
     if vertex == "out" {
-        let dac = visited.contains("dac");
-        let fft = visited.contains("fft");
-        if dac && fft {
-            return 1;
-        } else {
-            return 0;
-        }
+        //println!("{:#?}", visited);
+        return 1;
     }
 
     let nodes = graph
